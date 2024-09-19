@@ -1,0 +1,57 @@
+---
+slug: /dev/tags
+description: A guide to minecraft tags in the paper-api
+---
+
+# Tags
+
+## What is a tag?
+
+In the context of Minecraft, a tag is a reference to a subset of elements in a
+[registry](registries.mdx). This sub-collection is primarily used by the game as a utility to
+group elements, however more and more tags additionally define behaviour.
+
+An example of a purely utility focused tag is the `minecraft:wool` tag on the
+`minecraft:item` [registry](registries.mdx), which references all color variations of wool items.
+An example of a behaviour defining tag is the `minecraft:curse` tag on the `minecraft:enchantment`
+[registry](registries.mdx). All enchantments referenced by this tag are treated as a cursed
+enchantment, preventing e.g. the removal via a grindstone.
+
+### How to read Tags
+
+:::info
+The API exposes two ways of interacting with tags.
+Both types represent the same vanilla concept, but differ in their range of possible usages
+as the [bukkit tag system](#bukkit-tag-api) was introduced years ago, whereas the
+[paper tag api](#paper-tag-api) is newer and more complete.
+:::
+
+#### Bukkit Tag API
+The main entry point for the bukkit tag API is the <Javadoc name={"org.bukkit.Tag"}>Tag</Javadoc>
+interface, which contains a subset of all available tags. The above-mentioned wool tag is,
+for example, available as a static field at
+<Javadoc name={"org.bukkit.Tag#WOOL"}>Tag.WOOL</Javadoc>.
+The bukkit tag API expose direct access to the referenced
+values via <Javadoc name={"org.bukkit.Tag#isTagged"}>Tag#isTagged</Javadoc> and
+<Javadoc name={"org.bukkit.Tag#getValues"}>Tag#getValues</Javadoc> respectively.
+
+:::note[Simple check if a block is a shulker box]
+```java
+// Check if passed block type is part of the `minecraft:shulker_boxes` tag.
+if (Tag.SHULKER_BOXES.isTagged(block.getType())) {
+  // block is a shulker box, no matter the color
+}
+```
+:::
+
+#### Paper Tag API
+Instead of a single interface, the paper tag API separates tags out into their
+<Javadoc name={"io.papermc.paper.registry.tag.TagKey"}>TagKeys</Javadoc>, which are found
+in classes related to the registry they refer to.
+A <Javadoc name={"io.papermc.paper.registry.tag.TagKey"}>TagKey</Javadoc> is a unique identifier
+for a <Javadoc name={"io.papermc.paper.registry.tag.Tag"}>Tag</Javadoc> and can be used to retrieve
+such.
+The above `minecraft:wool` <Javadoc name={"io.papermc.paper.registry.tag.TagKey"}>TagKey</Javadoc> is found at
+<Javadoc name={"io.papermc.paper.registry.keys.tags.ItemTypeTagKeys#WOOL"}>ItemTypeTagKeys.WOOL</Javadoc>.
+The <Javadoc name={"io.papermc.paper.registry.tag.TagKey"}>TagKey</Javadoc> for the `minecraft:curse` enchantment tag
+is located at <Javadoc name={"io.papermc.paper.registry.keys.tags.EnchantmentTagKeys#CURSE"}>EnchantmentTagKeys.CURSE</Javadoc>.
